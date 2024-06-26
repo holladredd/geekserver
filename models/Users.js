@@ -1,10 +1,10 @@
 const mongoose = require("mongoose");
+const bcrypt = require("bcrypt");
 
 const UserSchema = new mongoose.Schema(
   {
     fullname: {
       type: String,
-      required: true,
     },
     email: {
       type: String,
@@ -18,13 +18,9 @@ const UserSchema = new mongoose.Schema(
       type: Number,
       unique: false,
     },
+
     password: {
       type: String,
-      unique: false,
-    },
-    confirmpassword: {
-      type: String,
-      unique: false,
     },
   },
   {
@@ -32,5 +28,20 @@ const UserSchema = new mongoose.Schema(
   }
 );
 
+UserSchema.pre("save", async function (next) {
+  try {
+    const salt = await bcrypt.genSalt(10);
+    const cryptedPassword = await bcrypt.hash(this.password, salt);
+    this.password = cryptedPassword;
+    next();
+  } catch (error) {}
+});
+// UserShema.post('save', async function(next){
+//   try {
+
+//   } catch (error) {
+
+//   }
+// })
 const UserModel = mongoose.model("users", UserSchema);
 module.exports = UserModel;

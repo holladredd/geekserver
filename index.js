@@ -1,12 +1,15 @@
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
+const bcrypt = require("bcrypt");
 const backgroundRouter = require("./routes/BackgroundRouter");
 const BookRouter = require("./routes/BooksRouter");
 const RateRouter = require("./routes/RateRouter");
 const CommentRouter = require("./routes/CommentsRouter");
 const GenresRouter = require("./routes/GenresRouter");
 const UserRouter = require("./routes/UsersRouter");
+const UserModel = require("./models/Users");
+
 require("dotenv").config();
 
 const app = express();
@@ -31,9 +34,27 @@ app.get("/", (req, res) => {
   // res.send(req.body);
 });
 
+// app.post("/users/login", (req, res) => {
+//   const { username, password } = req.body;
+//   UserModel.findOne({ username: username }).then((user) => {
+//     if (user) {
+//       bcrypt.compare(password, user.password, (err, response) => {
+//         if (err) {
+//           res.json("the password is incorrect");
+//         }
+//         if (response) {
+//           res.json("success");
+//         }
+//       });
+//     } else {
+//       res.json("no record found");
+//     }
+//   });
+// });
 app.use("/backgroundimages", backgroundRouter);
 app.use("/books", BookRouter);
 app.use("/ratings", RateRouter);
 app.use("/comments", CommentRouter);
 app.use("/genres", GenresRouter);
 app.use("/users", UserRouter);
+app.use("/users/login", UserRouter);

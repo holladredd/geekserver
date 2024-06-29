@@ -9,13 +9,19 @@ const getUsers = asyncHandler(async (req, res) => {
   const user = await UserModel.findOne({ username: username });
   try {
     if (!user) {
-      res.send("wrong username");
-      return;
+      res.json("wronguser");
+      // return;
     }
     const isvalid = await bcrypt.compare(password, user.password);
-    if (isvalid) {
+    if (!isvalid) {
+      res.json("wrongPassword");
+
+      // return;
+    }
+
+    if (isvalid && user) {
       res.json("success");
-      res.status(200).json(users);
+      res.status(200).json(user);
     }
   } catch (error) {
     console.log(error.message);
@@ -24,9 +30,16 @@ const getUsers = asyncHandler(async (req, res) => {
 });
 
 const createUsers = asyncHandler(async (req, res) => {
+  // const { username, email } = req.body;
   try {
+    // if (username != null || email != null) {
+    //   res.json("userExist");
+    //   return;
+    // }
     const users = await UserModel.create(req.body);
-
+    // if (user.username != null) {
+    //   res.json("UserExist");
+    // }
     res.status(200).json(users);
   } catch (error) {
     console.log(error.message);
